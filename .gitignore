@@ -3,5 +3,8 @@
 *.a
 *.o
 *.exe
+*.wasm
+*.html
+*.js
 
 /examples/

@@ -1,11 +1,9 @@
-CC = g++
-FLAGS = -O2 -Wall -Wno-missing-braces -I ../include/ -L ../lib/ -lraylib -lopengl32 -lgdi32 -lwinmm
+CC = em++
+UNUSED = --shell-file path-to/shell.html
+FLAGS = -O2 -Wall -I ../include/ -L ../lib/ -lraylib -s USE_GLFW=3 -s ASYNCIFY -DPLATFORM_WEB
 
 all: ./maze.o
-	$(CC) ../main.cpp ./maze.o -o test.exe $(FLAGS)
-
-release: ./maze.o
-	$(CC) ../main.cpp ./maze.o -o MazeGen.exe $(FLAGS) -mwindows
+	$(CC) ../main.cpp ./maze.o -o test.html $(FLAGS)
 
 maze.o: ../maze.cpp
-	g++ ../maze.cpp -c 
+	em++ ../maze.cpp -c 
