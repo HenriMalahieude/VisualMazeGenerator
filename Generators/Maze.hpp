@@ -1,18 +1,22 @@
 #ifndef MAZEGEN_H
 #define MAZEGEN_H
 #include <vector>
+#include <cstdlib>
 
 using namespace std;
 
+enum Generator {NONE = 0, DEPTH_FIRST, KRUSKAL};
+
 struct Maze{
     int size;
-    vector<vector<char>> scene;
+    vector<vector<char>> scene = {};
 
     void Clear(){
-        for (unsigned iX = 0; iX < size; iX++){
+        scene.clear();
+        for (int iX = 0; iX < size; iX++){
             scene.push_back(vector<char>(0));
 
-            for (unsigned iY = 0; iY < size; iY++){
+            for (int iY = 0; iY < size; iY++){
                 if (iY % 2 == 0 || iX % 2 == 0){
                     //maze[iX][iY] = '#';
                     scene[iX].push_back('#');
@@ -47,32 +51,28 @@ class DepthFirstGenerator{
         void StepMaze(Maze&);
 };
 
+struct Cell{
+    int x = -1, y;
+    int seed;
+    int collapsedDirections = 0;
+};
+
 class KruskalGenerator{
     private:
-        vector<vector<int>> cellSeeds;
+        vector<Cell> seeds;
+        vector<Cell> used;
         bool isFinished;
 
+        void CollapseSeedGroups(int from, int to);
+        void GetNextDirection(const Maze&, pair<int, int>, pair<int, int> &possible);
+        Cell* GetCellAtPos(pair<int, int>);
     public:
+        KruskalGenerator(){};
+        bool Finished() const {return isFinished;}
+
         void Reset(Maze&);
         void StepMaze(Maze&);
 
 };
-
-//Global Functions
-void clamp(int &value, int min, int max){
-    if (min > max){
-        return;
-    }
-
-    if (value > max){
-        value = max;
-    }else if(value < min){
-        value = min;
-    }
-}
-
-int generateRandomInt(int low, int high){
-    return low + rand() % (high - low + 1);
-}
 
 #endif
