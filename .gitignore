@@ -3,6 +3,6 @@
 *.a
 *.o
 *.exe
-
+*.dll
 
 /examples/

@@ -1,11 +1,27 @@
 //Programmed by Henri Malahieude
 #include <iostream>
 #include <ctime>
-#include <cstdlib>
 
 #include "Maze.hpp"
 
 //using namespace std;
+
+//Global Functions
+void clamp(int &value, int min, int max){
+    if (min > max){
+        return;
+    }
+
+    if (value > max){
+        value = max;
+    }else if(value < min){
+        value = min;
+    }
+}
+
+int generateRandomInt(int low, int high){
+    return low + rand() % (high - low + 1);
+}
 
 bool checkVectorForPos(vector<int> pos, const vector<vector<int>> &v){
     for (unsigned i = 0; i < v.size(); i++){
@@ -27,6 +43,8 @@ void DepthFirstGenerator::Reset(Maze &m){
         GetRandomPos(m, currentCell);
         visited.clear();
         stack.clear();
+
+        isFinished = false;
     }
 }
 
