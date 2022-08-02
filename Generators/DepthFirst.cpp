@@ -3,27 +3,9 @@
 #include <ctime>
 #include <cstdlib>
 
-#include "maze.h"
+#include "Maze.hpp"
 
 //using namespace std;
-const unsigned int mSize = 21; //must be ODD
-
-//Global Functions
-void clamp(int &value, int min, int max){
-    if (min > max){
-        return;
-    }
-
-    if (value > max){
-        value = max;
-    }else if(value < min){
-        value = min;
-    }
-}
-
-int generateRandomInt(int low, int high){
-    return low + rand() % (high - low + 1);
-}
 
 bool checkVectorForPos(vector<int> pos, const vector<vector<int>> &v){
     for (unsigned i = 0; i < v.size(); i++){
@@ -34,50 +16,17 @@ bool checkVectorForPos(vector<int> pos, const vector<vector<int>> &v){
     return false;
 }
 
-//Maze Generation (using back tracker method)
-    //just on opposite ends
-void createStandardEntrances(vector<vector<char>> &maze){
-    maze[0][1] = ' ';
-    maze[maze.size()-1][maze.size()-2] = ' ';
-}
-
-MazeGenerator::MazeGenerator(int size){
-    mazeSize = size * 2 + 1;
-    isFinished = true;
-
-    ResetMaze();
-}
-
-bool MazeGenerator::FinishedGenerate() const{
+bool DepthFirstGenerator::FinishedGenerate() const{
     return isFinished;
 }
 
-void MazeGenerator::ResetMaze(){
+void DepthFirstGenerator::Reset(Maze &m){
     if (isFinished){
-        ClearMaze();
-        createStandardEntrances(maze);
+        m.Clear();
         
-        GetRandomPos(currentCell);
+        GetRandomPos(m, currentCell);
         visited.clear();
         stack.clear();
-    }
-}
-
-void MazeGenerator::ClearMaze(){
-    isFinished = false;
-    maze.clear();
-
-    for (unsigned iX = 0; iX < mazeSize; iX++){
-        maze.push_back(vector<char>(0));
-
-        for (unsigned iY = 0; iY < mazeSize; iY++){
-            if (iY % 2 == 0 || iX % 2 == 0){
-                //maze[iX][iY] = '#';
-                maze[iX].push_back('#');
-            }else{
-                maze[iX].push_back(' ');
-            }
-        }
     }
 }
 
@@ -90,8 +39,8 @@ void printMaze(vector<vector<char>> &maze){
     }
 }
 
-void MazeGenerator::GetRandomPos(vector<int> &pos){
-    vector<int> randomized = {generateRandomInt(1, mazeSize-2), generateRandomInt(1, mazeSize-2)};
+void DepthFirstGenerator::GetRandomPos(Maze &m, vector<int> &pos){
+    vector<int> randomized = {generateRandomInt(1, m.size-2), generateRandomInt(1, m.size-2)};
 
     if (randomized[0] % 2 == 0){
         int r = rand() % 2;
@@ -111,21 +60,10 @@ void MazeGenerator::GetRandomPos(vector<int> &pos){
         }
     }
 
-    clamp(randomized[0], 1, mazeSize-2);
-    clamp(randomized[1], 1, mazeSize-2);
+    clamp(randomized[0], 1, m.size-2);
+    clamp(randomized[1], 1, m.size-2);
 
     pos = randomized;
-}
-
-    //randomly create entrances, but eh
-void MazeGenerator::CreateRandomEntrances(){
-    vector<int> pos;
-
-    GetRandomPos(pos);
-    maze[0][pos[1]] = ' ';
-
-    GetRandomPos(pos);
-    maze[mazeSize-1][pos[1]] = ' ';
 }
 
 void removeSelectedIndices(vector<int> selectedIndices, vector<vector<int>> &from){
@@ -134,7 +72,7 @@ void removeSelectedIndices(vector<int> selectedIndices, vector<vector<int>> &fro
     }
 }
 
-void MazeGenerator::GetPossibleDirections(vector<int> pos, vector<vector<int>> &directions){
+void DepthFirstGenerator::GetPossibleDirections(Maze &m, vector<int> pos, vector<vector<int>> &directions){
     vector<vector<int>> possibleDirections = {
         {2, 0},
         {0, 2},
@@ -146,11 +84,11 @@ void MazeGenerator::GetPossibleDirections(vector<int> pos, vector<vector<int>> &
     for (int d = 0; d < 4; d++){
         vector<int> newPos = {pos[0] + possibleDirections[d][0], pos[1] + possibleDirections[d][1]};
 
-        if(newPos[0] < 1 || newPos[0] > mazeSize-2){
+        if(newPos[0] < 1 || newPos[0] > m.size-2){
             removeIndices.push_back(d);
             continue;
         }
-        if(newPos[1] < 1 || newPos[1] > mazeSize-2){
+        if(newPos[1] < 1 || newPos[1] > m.size-2){
             removeIndices.push_back(d);
             continue;
         }
@@ -166,9 +104,9 @@ void MazeGenerator::GetPossibleDirections(vector<int> pos, vector<vector<int>> &
     directions = possibleDirections;
 }
 
-void MazeGenerator::StepMaze(){
+void DepthFirstGenerator::StepMaze(Maze &m){
     vector<vector<int>> possibleDirections;
-    GetPossibleDirections(currentCell, possibleDirections);
+    GetPossibleDirections(m, currentCell, possibleDirections);
 
     //cout << "Visited: " << visited.size() << " | In Stack: " << stack.size() << " | Directions: " << possibleDirections.size() << endl;
 
@@ -184,13 +122,13 @@ void MazeGenerator::StepMaze(){
         vector<int> wallPos = {currentCell[0] + (chosenDir[0]/2), currentCell[1] + (chosenDir[1]/2)};
         
         //Remove the wall
-        maze[wallPos[0]][wallPos[1]] = ' ';
+        m.scene[wallPos[0]][wallPos[1]] = ' ';
 
         stack.push_back(currentCell);
         currentCell = {currentCell[0] + chosenDir[0], currentCell[1] + chosenDir[1]};
     }
 
-    int numOfCells = (mazeSize-1)/2;
+    int numOfCells = (m.size-1)/2;
     if (visited.size() + stack.size() >= ((numOfCells*numOfCells) - 1)){
         isFinished = true;
     }
