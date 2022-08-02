@@ -1,7 +1,6 @@
 #include "raylib.h" //Render pipeline
 
-#include "maze.h" //Maze Generator (Recursive Backtracker)
-#include "greedy.h" //Greedy Pathfinding Solution
+#include "Generators/Maze.hpp" //Maze Generator (Recursive Backtracker)
 
 //Globals
 const int windowDim = 900;
@@ -27,7 +26,8 @@ int main(){
 
     float time = 0.0f;
 
-    MazeGenerator maze(cellAmount);
+    Maze picture = Maze{cellAmount};
+    DepthFirstGenerator dfSolver;
 
     //Start Up Animation
     for (int i = 0; i < wallMax; i++){
@@ -54,14 +54,14 @@ int main(){
         BeginDrawing();
             ClearBackground(GRAY);
             
-            showMaze(maze.maze);
+            showMaze(picture);
 
-            if (!maze.FinishedGenerate()){
-                int x = maze.currentCell[0];
-                int y = maze.currentCell[1];
-                createSquare(wallSize, x * wallSize, y * wallSize, RED);
+            if (!dfSolver.FinishedGenerate()){
+                int x = dfSolver.currentCell[0];
+                int y = dfSolver.currentCell[1];
+                createSquare(wallSize, x * wallSize, y * wallSize, RED); //Current "Digger" Location
                 if (time >= generateStepTime){
-                    maze.StepMaze();
+                    dfSolver.StepMaze(picture);
 
                     time = 0;
                 }
@@ -101,10 +101,10 @@ void loadAt(int h, int v){
     }
 }
 
-void showMaze(vector<vector<char>> maze){
+void showMaze(Maze &maze){
     for (int i = 0; i < wallMax; i++){
         for (int j = 0; j < wallMax; j++){
-            if (maze[i][j] == '#'){
+            if (maze.scene[i][j] == '#'){
                 createSquare(wallSize, i*wallSize, j*wallSize, BLACK);
             }
         }
