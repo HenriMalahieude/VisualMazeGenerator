@@ -1,0 +1,1 @@
+g++ ../main.cpp ../Generators/DepthFirst.cpp ../Generators/Kruskal.cpp -o test.exe -I ./include/ -L ./libg++/ -lraylib -lgdi32 -lwinmm
