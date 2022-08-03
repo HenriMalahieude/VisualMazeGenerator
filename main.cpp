@@ -65,7 +65,7 @@ int main(){
     while (!WindowShouldClose()){
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-            cout << dfGen.FinishedGenerate() << kGen.Finished() << endl;
+            //cout << dfGen.FinishedGenerate() << kGen.Finished() << endl;
             if (dfGen.FinishedGenerate() && kGen.Finished() && currentGen == NONE){
                 int mX = GetMouseX();
                 int mY = GetMouseY();
