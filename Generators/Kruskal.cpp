@@ -49,15 +49,15 @@ void KruskalGenerator::GetNextDirection(const Maze &m, pair<int, int> pos, pair<
             //If not the same cell or nullptr
             if (nCell != oCell && nCell != nullptr && oCell != nullptr){
                 if (nCell->seed != oCell->seed){
-                    pIndex.push_back(i); // <<<<<<<<<<<<<<<<<<<----------------------This for some goddamn reason causes runtime error
+                    pIndex.push_back(i);
                 }else{ //Collapse seed, cannot travel in that direction anymore
-                    oCell->collapsedDirections++;
+                    //oCell->collapsedDirections++;
                 }
             }
         }
     }
 
-    if (pIndex.size() > 1){
+    if (pIndex.size() >= 1){
         possible = pDirs[pIndex[rand() % pIndex.size()]];
     }
 }
@@ -97,6 +97,7 @@ void KruskalGenerator::StepMaze(Maze &m){
         //cout << "Located New Pos" << endl;
 
         if (seeds.size() <= 1){ //no new cells means that we can't go anywhere
+            //TODO: Ensure that there is only one seed, if not then find the seed with the least amount of cells and then put them back in the seeds list
             isFinished = true; //and we are done
             return;
         }
