@@ -38,7 +38,7 @@ class DepthFirstGenerator{
 
         void GetRandomPos(Maze &m, vector<int> &pos);
         void GetPossibleDirections(Maze &m, vector<int> pos, vector<vector<int>> &directions);
-        bool isFinished;
+        bool isFinished = true;
 
     public:
         vector<int> currentCell = {1, 1};
@@ -61,7 +61,7 @@ class KruskalGenerator{
     private:
         vector<Cell> seeds;
         vector<Cell> used;
-        bool isFinished;
+        bool isFinished = true;
 
         void CollapseSeedGroups(int from, int to);
         void GetNextDirection(const Maze&, pair<int, int>, pair<int, int> &possible);

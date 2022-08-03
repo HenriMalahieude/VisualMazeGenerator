@@ -24,6 +24,12 @@ void KruskalGenerator::CollapseSeedGroups(int from, int to){
             seeds[x].seed = to;
         }
     }
+
+    for (unsigned x = 0; x < used.size(); x++){
+        if (used[x].seed == from){
+            used[x].seed = to;
+        }
+    }
 }
 
 void KruskalGenerator::GetNextDirection(const Maze &m, pair<int, int> pos, pair<int, int> &possible){
