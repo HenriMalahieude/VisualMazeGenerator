@@ -53,14 +53,14 @@ int main(){
     picture.Clear();
 
     //Start Up Animation
-    for (int i = 0; i < wallMax; i++){
+    /*for (int i = 0; i < wallMax; i++){
         BeginDrawing();
         ClearBackground(GRAY);
         for (int j = 0; j < wallMax; j++){
             loadAt(j , i);
         }
         EndDrawing();
-    }
+    }*/
 
     while (!WindowShouldClose()){
 
