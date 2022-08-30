@@ -18,7 +18,6 @@ struct Maze{
 
             for (int iY = 0; iY < size; iY++){
                 if (iY % 2 == 0 || iX % 2 == 0){
-                    //maze[iX][iY] = '#';
                     scene[iX].push_back('#');
                 }else{
                     scene[iX].push_back(' ');
@@ -63,6 +62,7 @@ class KruskalGenerator{
         vector<Cell> used;
         bool isFinished = true;
 
+        int UniqueSeeds();
         void CollapseSeedGroups(int from, int to);
         void GetNextDirection(const Maze&, pair<int, int>, pair<int, int> &possible);
         Cell* GetCellAtPos(pair<int, int>);

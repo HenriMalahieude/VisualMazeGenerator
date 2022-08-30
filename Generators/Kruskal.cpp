@@ -2,6 +2,32 @@
 #include <utility>
 #include <iostream>
 
+int KruskalGenerator::UniqueSeeds(){
+    vector<int> uniques(0);
+    bool (*check)(int s) = [](int s){
+        for (unsigned i = 0; i < uniques.size(); i++){
+            if (uniques.at(i) == s){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    for (unsigned i = 0; i < seeds.size(); i++){
+        if (check(seeds.at(i).seed)){
+            uniques.push_back(seeds.at(i).seed);
+        }
+    }
+
+    for (unsigned i = 0; i < used.size(); i++){
+        if (check(used.at(i).seed)){
+            uniques.push_back(used.at(i).seed);
+        }
+    }
+
+    return uniques.size();
+}
+
 Cell* KruskalGenerator::GetCellAtPos(pair<int, int> pos){
     for (unsigned x = 0; x < seeds.size(); x++){
         if (seeds[x].x == pos.first && seeds[x].y == pos.second){
@@ -92,11 +118,9 @@ void KruskalGenerator::StepMaze(Maze &m){
 
             randCellIndex = seeds.size() > 0 ? rand() % seeds.size() : 0;
             rCell = seeds[randCellIndex]; //find a new cell
-            //cout << "deleting" << endl;
         }
-        //cout << "Located New Pos" << endl;
 
-        if (seeds.size() <= 1){ //no new cells means that we can't go anywhere
+        if (seeds.size() <= 1 || UniqueSeeds() < 2){ //All Groups of Cells have been joined together, therefore we are done.
             //TODO: Ensure that there is only one seed, if not then find the seed with the least amount of cells and then put them back in the seeds list
             isFinished = true; //and we are done
             return;
@@ -113,7 +137,6 @@ void KruskalGenerator::StepMaze(Maze &m){
             Cell *oCell, *nCell;
             oCell = GetCellAtPos(nextPos);
             nCell = GetCellAtPos(dirPos);
-            //cout << oCell << " " << nCell << endl;
 
             if (oCell != nCell && oCell != nullptr && nCell != nullptr){
                 m.scene[wallPos.first][wallPos.second] = ' '; //delete wall
