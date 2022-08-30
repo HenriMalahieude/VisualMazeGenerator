@@ -2,7 +2,7 @@
 #include <iostream>
 #include <ctime>
 
-#include "Maze.hpp"
+#include "DepthFirst.hpp"
 
 //using namespace std;
 

@@ -1,9 +1,17 @@
-#include "raylib.h" //Render pipeline
 #include <string>
 #include <iostream>
-#include "Generators/Maze.hpp" //Maze Generator (Recursive Backtracker)
+
+#include "raylib.h" //Render pipeline
+
+
+#include "Generators/Maze.hpp"
+#include "Generators/DepthFirst/DepthFirst.hpp"
+#include "Generators/Kruskal/Kuskal.hpp"
+#include "Solvers/Greedy/Greedy.hpp"
 
 //Note: This is all so haphazard, but I don't really have the motivation to reorganize all this
+enum Generator {NONE = 0, DEPTH_FIRST, KRUSKAL};
+enum Solver {NONE = 0, GREEDY};
 
 //Globals
 const int windowDim = 900;

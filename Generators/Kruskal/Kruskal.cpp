@@ -1,4 +1,4 @@
-#include "Maze.hpp"
+#include "Kruskal.hpp"
 #include <utility>
 #include <iostream>
 
