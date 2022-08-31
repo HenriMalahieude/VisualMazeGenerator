@@ -6,18 +6,18 @@
 
 #include "Generators/Maze.hpp"
 #include "Generators/DepthFirst/DepthFirst.hpp"
-#include "Generators/Kruskal/Kuskal.hpp"
+#include "Generators/Kruskal/Kruskal.hpp"
 #include "Solvers/Greedy/Greedy.hpp"
 
 //Note: This is all so haphazard, but I don't really have the motivation to reorganize all this
-enum Generator {NONE = 0, DEPTH_FIRST, KRUSKAL};
-enum Solver {NONE = 0, GREEDY};
+enum Generator {DEAF = 0, DEPTH_FIRST, KRUSKAL};
+enum Solver {BLIND = 0, GREEDY};
 
 //Globals
 const int windowDim = 900;
 const int cellAmount = 21;
 const float generateStepTime = 0.025f;
-const float solveStepTime    = 0.005f;
+const float solveStepTime    = 0.0025f;
 
 //Calculated Globals
 const int wallMax = (cellAmount*2+1);
@@ -38,25 +38,32 @@ struct ButtonInfo{
 void createSquare(int, int, int, Color);
 void loadAt(int, int);
 void showMaze(Maze &maze);
-bool clickInLocation(int mX, int mY, ButtonInfo); 
+bool clickInLocation(int mX, int mY, ButtonInfo);
+void showPath(vector<pair<int, int>> &, Color);
 
 vector<ButtonInfo> buttons = {
-    ButtonInfo{0, 0, 100, 100, Color{0, 255, 0, 200}, "Depth First\nGen"},
-    ButtonInfo{100, 0, 100, 100, Color{255, 255, 0, 200}, "Kruskal Gen"},
-    ButtonInfo{0, windowDim-100, 100, 100, Color{0, 100, 255, 200}, "SOLVER\nTO DO"},
+    ButtonInfo{0, 0, 100, 100, Color{0, 255, 0, 200}, "Depth\nFirst\nGen"},
+    ButtonInfo{100, 0, 100, 100, Color{255, 255, 0, 200}, "Kruskal\nGen"},
+    ButtonInfo{0, windowDim-100, 100, 100, Color{0, 100, 255, 200}, "Greedy\nSolver"},
 };
 
 int main(){
     InitWindow(windowDim, windowDim, "Maze Generator 9000");
-    SetTargetFPS(30);
+    SetTargetFPS(60);
 
     float time = 0.0f;
 
     Maze picture = Maze{wallMax};
+    
+    //Generators
     DepthFirstGenerator dfGen;
     KruskalGenerator kGen;
 
-    Generator currentGen = NONE;
+    //Solvers
+    GreedySolver gSolv;
+
+    Solver currentSolv = BLIND;
+    Generator currentGen = DEAF;
 
     picture.Clear();
 
@@ -74,7 +81,7 @@ int main(){
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
             //cout << dfGen.FinishedGenerate() << kGen.Finished() << endl;
-            if (dfGen.FinishedGenerate() && kGen.Finished() && currentGen == NONE){
+            if (dfGen.FinishedGenerate() && kGen.Finished() && currentGen == DEAF && currentSolv == BLIND){
                 int mX = GetMouseX();
                 int mY = GetMouseY();
 
@@ -82,10 +89,19 @@ int main(){
 
                 if (clickInLocation(mX, mY, buttons[0])){
                     dfGen.Reset(picture);
+
                     currentGen = DEPTH_FIRST;
+                    currentSolv = BLIND;
                 }else if (clickInLocation(mX, mY, buttons[1])){
                     kGen.Reset(picture);
+
                     currentGen = KRUSKAL;
+                    currentSolv = BLIND;
+                }else if (clickInLocation(mX, mY, buttons[2])){
+                    gSolv.Reset(picture);
+
+                    currentGen = DEAF;
+                    currentSolv = GREEDY;
                 }
             }
         }
@@ -94,8 +110,9 @@ int main(){
             ClearBackground(GRAY);
             
             showMaze(picture);
+            showPath(picture.path, YELLOW);
 
-            if (currentGen != NONE){
+            if (currentGen != DEAF){
                 if (currentGen == DEPTH_FIRST){
                     if (!dfGen.FinishedGenerate()){
                         int x = dfGen.currentCell[0];
@@ -109,7 +126,7 @@ int main(){
 
                         time += GetFrameTime();
                     }else{
-                        currentGen = NONE;
+                        currentGen = DEAF;
                     }
                 }else if (currentGen == KRUSKAL){
                     if (!kGen.Finished()){
@@ -121,14 +138,29 @@ int main(){
 
                         time += GetFrameTime();
                     }else{
-                        currentGen = NONE;
+                        currentGen = DEAF;
+                    }
+                }
+            }else if (currentSolv != BLIND){
+                if (currentSolv == GREEDY) {
+                    showPath(gSolv.tried, BLUE);
+                    if (!gSolv.IsFinished()){
+                        if (time >= solveStepTime){
+                            gSolv.StepSolve(picture, {picture.size - 1, picture.size - 2}, {0, 1});
+
+                            time = 0;
+                        }
+
+                        time += GetFrameTime();
+                    }else{
+                        currentSolv = BLIND;
                     }
                 }
             }else{
                 for (unsigned i = 0; i < buttons.size(); i++){
                     ButtonInfo b = buttons.at(i);
                     DrawRectangle(b.x, b.y, b.sizeX, b.sizeY, b.background);
-                    DrawText(b.text.c_str(), b.x + 5, b.y + 40, 20, BLACK);
+                    DrawText(b.text.c_str(), b.x + 5, b.y + 20, 20, BLACK);
                 }
             }
 
@@ -176,5 +208,11 @@ void showMaze(Maze &maze){
                 createSquare(wallSize, i*wallSize, j*wallSize, BLACK);
             }
         }
+    }
+}
+
+void showPath(vector<pair<int, int>> &path, Color col){
+    for (unsigned i = 0; i < path.size(); i++){
+        createSquare(wallSize, path[i].first*wallSize, path[i].second*wallSize, col);
     }
 }

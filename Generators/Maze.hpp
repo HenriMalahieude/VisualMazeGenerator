@@ -9,9 +9,11 @@ using namespace std;
 struct Maze{
     int size;
     vector<vector<char>> scene = {};
+    vector<pair<int, int>> path = {};
 
     void Clear(){
         scene.clear();
+        path.clear();
         for (int iX = 0; iX < size; iX++){
             scene.push_back(vector<char>(0));
 

@@ -4,23 +4,23 @@
 
 int KruskalGenerator::UniqueSeeds(){
     vector<int> uniques(0);
-    bool (*check)(int s) = [](int s){
-        for (unsigned i = 0; i < uniques.size(); i++){
-            if (uniques.at(i) == s){
+    bool (*check)(int s, vector<int> &u) = [](int s, vector<int> &u){
+        for (unsigned i = 0; i < u.size(); i++){
+            if (u.at(i) == s){
                 return false;
             }
         }
         return true;
-    }
+    };
 
     for (unsigned i = 0; i < seeds.size(); i++){
-        if (check(seeds.at(i).seed)){
+        if (check(seeds.at(i).seed, uniques)){
             uniques.push_back(seeds.at(i).seed);
         }
     }
 
     for (unsigned i = 0; i < used.size(); i++){
-        if (check(used.at(i).seed)){
+        if (check(used.at(i).seed, uniques)){
             uniques.push_back(used.at(i).seed);
         }
     }

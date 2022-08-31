@@ -2,8 +2,8 @@ CC = em++
 UNUSED = --shell-file path-to/shell.html
 FLAGS = -O2 -Wall -I ./include/ -L ./lib/ -lraylib -s USE_GLFW=3 -s ASYNCIFY -DPLATFORM_WEB
 
-all: ./DepthFirst.o ./Kruskal.o
-	$(CC) ../main.cpp ./DepthFirst.o ./Kruskal.o -o index.html $(FLAGS)
+all: ./DepthFirst.o ./Kruskal.o ./Greedy.o
+	$(CC) ../main.cpp ./DepthFirst.o ./Kruskal.o ./Greedy.o -o index.html $(FLAGS)
 
 DepthFirst.o: ../Generators/DepthFirst/DepthFirst.cpp ../Generators/DepthFirst/DepthFirst.hpp ../Generators/Maze.hpp
 	$(CC) ../Generators/DepthFirst/DepthFirst.cpp -c 
