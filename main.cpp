@@ -3,29 +3,26 @@
 
 #include "raylib.h" //Render pipeline
 
-
 #include "Generators/Maze.hpp"
 #include "Generators/DepthFirst/DepthFirst.hpp"
 #include "Generators/Kruskal/Kruskal.hpp"
 #include "Solvers/Greedy/Greedy.hpp"
+#include "Solvers/Dijkstras/Dijkstras.hpp"
 
 //Note: This is all so haphazard, but I don't really have the motivation to reorganize all this
 enum Generator {DEAF = 0, DEPTH_FIRST, KRUSKAL};
-enum Solver {BLIND = 0, GREEDY};
+enum Solver {BLIND = 0, GREEDY, DIJK};
 
 //Globals
 const int windowDim = 900;
 const int cellAmount = 21;
-const float generateStepTime = 0.025f;
-const float solveStepTime    = 0.0025f;
+const float generateStepTime = 0.015f;
+const float solveStepTime    = 0.0015f;
 
 //Calculated Globals
 const int wallMax = (cellAmount*2+1);
 const int wallSize = windowDim / wallMax;
-const int whiteBorder = (windowDim - (wallSize * wallMax)) / 1.5; //I don't understand why the centering border/extra space isn't consitent at all cell amounts
-
-//Global Variables
-bool loaded = false;
+const int whiteBorder = (windowDim - (wallSize * wallMax)) / 1.5; //I don't understand why the centering border/extra space isn't consistent at all cell amounts
 
 struct ButtonInfo{
     int x, y; //Top Left
@@ -42,9 +39,13 @@ bool clickInLocation(int mX, int mY, ButtonInfo);
 void showPath(vector<pair<int, int>> &, Color);
 
 vector<ButtonInfo> buttons = {
-    ButtonInfo{0, 0, 100, 100, Color{0, 255, 0, 200}, "Depth\nFirst\nGen"},
-    ButtonInfo{100, 0, 100, 100, Color{255, 255, 0, 200}, "Kruskal\nGen"},
-    ButtonInfo{0, windowDim-100, 100, 100, Color{0, 100, 255, 200}, "Greedy\nSolver"},
+    //Top
+    ButtonInfo{0, 0, 100, 100, Color{0, 255, 0, 150}, "Depth\nFirst\nGen"},
+    ButtonInfo{100, 0, 100, 100, Color{255, 255, 0, 150}, "Kruskal\nGen"},
+
+    //Bottom
+    ButtonInfo{0, windowDim-100, 100, 100, Color{0, 100, 255, 150}, "Greedy\nSolver"},
+    ButtonInfo{100, windowDim-100, 100, 100, Color{255, 0, 255, 150}, "Dijkstra's\nSolver"},
 };
 
 int main(){
@@ -61,6 +62,7 @@ int main(){
 
     //Solvers
     GreedySolver gSolv;
+    DijkstraSolver dSolv;
 
     Solver currentSolv = BLIND;
     Generator currentGen = DEAF;
@@ -79,7 +81,7 @@ int main(){
 
     while (!WindowShouldClose()){
 
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){ //TODO: Mobile
             //cout << dfGen.FinishedGenerate() << kGen.Finished() << endl;
             if (dfGen.FinishedGenerate() && kGen.Finished() && currentGen == DEAF && currentSolv == BLIND){
                 int mX = GetMouseX();
@@ -102,6 +104,11 @@ int main(){
 
                     currentGen = DEAF;
                     currentSolv = GREEDY;
+                }else if (clickInLocation(mX, mY, buttons[3])){
+                    dSolv.Reset(picture);
+
+                    currentGen = DEAF;
+                    currentSolv = DIJK;
                 }
             }
         }
@@ -123,8 +130,6 @@ int main(){
 
                             time = 0;
                         }
-
-                        time += GetFrameTime();
                     }else{
                         currentGen = DEAF;
                     }
@@ -135,12 +140,12 @@ int main(){
 
                             time = 0;
                         }
-
-                        time += GetFrameTime();
                     }else{
                         currentGen = DEAF;
                     }
                 }
+
+                time += GetFrameTime();
             }else if (currentSolv != BLIND){
                 if (currentSolv == GREEDY) {
                     showPath(gSolv.tried, BLUE);
@@ -150,12 +155,23 @@ int main(){
 
                             time = 0;
                         }
+                    }else{
+                        currentSolv = BLIND;
+                    }
+                }else if (currentSolv == DIJK){
+                    showPath(dSolv.visited, BLUE);
+                    if (!dSolv.IsFinished()){ //while not finished
+                        if (time >= solveStepTime){
+                            dSolv.StepSolve();
 
-                        time += GetFrameTime();
+                            time = 0;
+                        }
                     }else{
                         currentSolv = BLIND;
                     }
                 }
+
+                time += GetFrameTime();
             }else{
                 for (unsigned i = 0; i < buttons.size(); i++){
                     ButtonInfo b = buttons.at(i);

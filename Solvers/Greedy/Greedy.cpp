@@ -19,12 +19,6 @@ bool checkVectorForPos(pair<int, int> p, const vector<pair<int, int>> &vec){
 	return false;
 }
 
-void removeSelectedIndices(vector<int> selectedIndices, vector<pair<int, int>> &from){
-    for (unsigned i = 0; i < selectedIndices.size(); i++){
-        from.erase(from.begin() + selectedIndices[i] - i);
-    }
-}
-
 //Shamelessly Taken from DepthFirstGenerator
 void GreedySolver::GetPossibleDirections(Maze &m, pair<int, int> pos, vector<pair<int, int>> &directions){
     vector<pair<int, int>> possibleDirections = {
@@ -94,7 +88,7 @@ void GreedySolver::StepSolve(Maze &m, pair<int, int> s, pair<int, int> e){
         tried.push_back(cur);
         m.path.erase(next(m.path.begin(), m.path.size()-1));
     }else{
-        cout << "bruh" << endl;
+        //cout << "bruh" << endl;
         finished = true;
         return;
     }

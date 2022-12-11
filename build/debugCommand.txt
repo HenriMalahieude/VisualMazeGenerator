@@ -1,1 +1,1 @@
-g++ ../main.cpp ../Generators/DepthFirst/DepthFirst.cpp ../Generators/Kruskal/Kruskal.cpp ../Solvers/Greedy/Greedy.cpp -o test.exe -I ./include/ -L ./libg++/ -lraylib -lgdi32 -lwinmm
+g++ ../main.cpp ../Generators/DepthFirst/DepthFirst.cpp ../Generators/Kruskal/Kruskal.cpp ../Solvers/Greedy/Greedy.cpp ../Solvers/Dijkstras/Dijkstras.cpp -o test.exe -I ./include/ -L ./libg++/ -lraylib -lgdi32 -lwinmm

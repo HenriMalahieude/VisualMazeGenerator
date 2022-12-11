@@ -6,6 +6,8 @@
 
 using namespace std;
 
+void removeSelectedIndices(vector<int> selectedIndices, vector<pair<int, int>> &from);
+
 struct Maze{
     int size;
     vector<vector<char>> scene = {};
