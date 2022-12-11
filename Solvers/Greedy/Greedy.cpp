@@ -2,6 +2,13 @@
 
 #include "Greedy.hpp"
 
+template<typename T>
+void removeSelectedIndices(vector<int> selectedIndices, vector<T> &from){
+    for (unsigned i = 0; i < selectedIndices.size(); i++){
+        from.erase(from.begin() + selectedIndices[i] - i);
+    }
+}
+
 void GreedySolver::Reset(Maze &m){
 	tried.clear();
 	m.path.clear();

@@ -16,8 +16,8 @@ enum Solver {BLIND = 0, GREEDY, DIJK};
 //Globals
 const int windowDim = 900;
 const int cellAmount = 21;
-const float generateStepTime = 0.015f;
-const float solveStepTime    = 0.0015f;
+const float generateStepTime = 0.02f;
+const float solveStepTime    = 0.002f;
 
 //Calculated Globals
 const int wallMax = (cellAmount*2+1);
@@ -105,7 +105,7 @@ int main(){
                     currentGen = DEAF;
                     currentSolv = GREEDY;
                 }else if (clickInLocation(mX, mY, buttons[3])){
-                    dSolv.Reset(picture);
+                    dSolv.Reset(picture, {picture.size - 2, picture.size - 2});
 
                     currentGen = DEAF;
                     currentSolv = DIJK;
@@ -162,7 +162,7 @@ int main(){
                     showPath(dSolv.visited, BLUE);
                     if (!dSolv.IsFinished()){ //while not finished
                         if (time >= solveStepTime){
-                            dSolv.StepSolve();
+                            dSolv.StepSolve(picture, {1, 1});
 
                             time = 0;
                         }
