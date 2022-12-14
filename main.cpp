@@ -81,11 +81,11 @@ int main(){
 
     while (!WindowShouldClose()){
 
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){ //TODO: Mobile
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || GetTouchPointCount() > 0){
             //cout << dfGen.FinishedGenerate() << kGen.Finished() << endl;
             if (dfGen.FinishedGenerate() && kGen.Finished() && currentGen == DEAF && currentSolv == BLIND){
-                int mX = GetMouseX();
-                int mY = GetMouseY();
+                int mX = IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ? GetMouseX() : GetTouchX();
+                int mY = IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ? GetMouseY() : GetTouchY();
 
                 //cout << 2;
 
