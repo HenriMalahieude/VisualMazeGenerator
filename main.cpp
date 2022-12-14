@@ -17,7 +17,7 @@ enum Solver {BLIND = 0, GREEDY, DIJK};
 const int windowDim = 900;
 const int cellAmount = 21;
 const float generateStepTime = 0.02f;
-const float solveStepTime    = 0.002f;
+const float solveStepTime    = 0.00225f;
 
 //Calculated Globals
 const int wallMax = (cellAmount*2+1);
@@ -159,7 +159,7 @@ int main(){
                         currentSolv = BLIND;
                     }
                 }else if (currentSolv == DIJK){
-                    showPath(dSolv.visited, BLUE);
+                    showPath(dSolv.visited, PURPLE);
                     if (!dSolv.IsFinished()){ //while not finished
                         if (time >= solveStepTime){
                             dSolv.StepSolve(picture, {1, 1});
