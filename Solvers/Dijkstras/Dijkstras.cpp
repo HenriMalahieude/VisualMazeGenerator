@@ -103,12 +103,9 @@ void DijkstraSolver::StepSolve(Maze &m, pair<int, int> e){
 		DijkCellInfo reference = cellInfo[e.first][e.second];
 		
 		m.path.push_back({e.first, e.second});
-		pair<int, int> inBetween = GetInBetweenPos(cellInfo, reference.prevPos);
-
+		pair<int, int> inBetween = GetInBetweenPos(cellInfo, e);
+		
 		if (inBetween.first >= 0){
-			cout << e.first << ", " << e.second << endl;
-			cout << inBetween.first << ", " << inBetween.second << endl;
-			cout << reference.prevPos.first << ", " << reference.prevPos.second << endl;
 			m.path.push_back(inBetween);
 		}
 
