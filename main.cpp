@@ -78,6 +78,8 @@ int main(){
         }
         EndDrawing();
     }*/
+    int debTouchX = -1;
+    int debTouchY = -1;
 
     while (!WindowShouldClose()){
 
@@ -88,27 +90,38 @@ int main(){
                 int mY = IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ? GetMouseY() : GetTouchY();
 
                 //cout << 2;
+                bool touchIsNew = true;
+                if (GetTouchPointCount() > 0){
+                    if (debTouchX == mX && debTouchY == mY){ //Means the it wasn't a new touch because it was "exactly" the same
+                        touchIsNew = false;
+                    }else{
+                        debTouchX = mX;
+                        debTouchY = mY;
+                    }
+                }
 
-                if (clickInLocation(mX, mY, buttons[0])){
-                    dfGen.Reset(picture);
+                if (touchIsNew){
+                    if (clickInLocation(mX, mY, buttons[0])){
+                        dfGen.Reset(picture);
 
-                    currentGen = DEPTH_FIRST;
-                    currentSolv = BLIND;
-                }else if (clickInLocation(mX, mY, buttons[1])){
-                    kGen.Reset(picture);
+                        currentGen = DEPTH_FIRST;
+                        currentSolv = BLIND;
+                    }else if (clickInLocation(mX, mY, buttons[1])){
+                        kGen.Reset(picture);
 
-                    currentGen = KRUSKAL;
-                    currentSolv = BLIND;
-                }else if (clickInLocation(mX, mY, buttons[2])){
-                    gSolv.Reset(picture);
+                        currentGen = KRUSKAL;
+                        currentSolv = BLIND;
+                    }else if (clickInLocation(mX, mY, buttons[2])){
+                        gSolv.Reset(picture);
 
-                    currentGen = DEAF;
-                    currentSolv = GREEDY;
-                }else if (clickInLocation(mX, mY, buttons[3])){
-                    dSolv.Reset(picture, {picture.size - 2, picture.size - 2});
+                        currentGen = DEAF;
+                        currentSolv = GREEDY;
+                    }else if (clickInLocation(mX, mY, buttons[3])){
+                        dSolv.Reset(picture, {picture.size - 2, picture.size - 2});
 
-                    currentGen = DEAF;
-                    currentSolv = DIJK;
+                        currentGen = DEAF;
+                        currentSolv = DIJK;
+                    }
                 }
             }
         }
