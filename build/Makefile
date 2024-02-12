@@ -1,6 +1,7 @@
 CC = em++
 UNUSED = --shell-file path-to/shell.html
-FLAGS = -O2 -Wall -I ./include/ -L ./lib/ -lraylib -s USE_GLFW=3 -s ASYNCIFY -DPLATFORM_WEB
+RAYLIB_PATH = C:\Users\there\OneDrive\Documents\Projects\Raylib\raylib\src
+FLAGS = -O2 -Wall -I $(RAYLIB_PATH) -L ./lib/ -lraylib -s USE_GLFW=3 -s ASYNCIFY -DPLATFORM_WEB
 
 all: ./DepthFirst.o ./Kruskal.o ./Greedy.o ./Dijkstras.o
 	$(CC) ../main.cpp ./DepthFirst.o ./Kruskal.o ./Dijkstras.o ./Greedy.o -o index.html $(FLAGS)
